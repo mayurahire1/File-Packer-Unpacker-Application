@@ -74,6 +74,12 @@ class FileUnpacker
 
                             fiobj.read(Buffer, 0, FileSize);
 
+                            for(int j = 0; j < FileSize; j++)
+                            {   
+                                Buffer[j] = (byte)(Buffer[j] ^ 'A');
+                            }
+
+
                             foobj.write(Buffer, 0, FileSize);
 
                             foobj.close();

@@ -100,6 +100,10 @@ class FilePacker
                                 // Write file data
                                 while((iRet = fiobj.read(Buffer)) != -1)
                                 {
+                                    for(int k = 0; k < iRet; k++)
+                                    {
+                                        Buffer[k] = (byte)(Buffer[k] ^ 'A');
+                                    }
                                     foobj.write(Buffer, 0, iRet);
                                 }
 

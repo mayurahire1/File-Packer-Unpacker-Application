@@ -1,56 +1,111 @@
-# File Packer and Unpacker 
+# File Packer and Unpacker with Encryption
 
 A Java-based desktop application that allows users to **pack multiple files from a folder into a single file** and later **unpack the files back to their original form**.
 
-The project uses **Java Swing** for the graphical user interface and **Java I/O streams** for reading and writing files.
+The application uses **XOR-based encryption and decryption** to protect file data during the packing and unpacking process.
+
+---
 
 ## 📌 Project Description
 
-The File Packer and Unpacker application is designed to demonstrate file handling and GUI programming in Java.
+The **File Packer and Unpacker** is a Java Swing-based desktop application developed to demonstrate:
+
+* File handling
+* File packing and unpacking
+* Java Swing GUI
+* Java I/O streams
+* XOR encryption and decryption
+* Byte-level file operations
 
 The application consists of two modules:
 
 ### 1. File Packer
 
-The File Packer takes a folder as input and combines all the files present inside the folder into a single packed file.
+The File Packer takes a folder as input and combines multiple files into a single packed file.
 
-For each file, the application stores:
+For each file, it stores:
 
 * File name
 * File size
-* File contents
+* Encrypted file contents
 
-A fixed-size **100-byte header** is created for each file. The header contains the file name and file size, followed by the actual file data.
+A fixed-size **100-byte header** is created for each file. The header contains the file name and file size, followed by the encrypted file data.
 
 ### 2. File Unpacker
 
-The File Unpacker takes the packed file as input and extracts all the files stored inside it.
+The File Unpacker takes the packed file as input and extracts the files stored inside it.
 
-It reads the 100-byte header, identifies the file name and file size, and then reads the corresponding file data to recreate the original file.
+It:
+
+1. Reads the 100-byte header.
+2. Extracts the file name and file size.
+3. Reads the encrypted file data.
+4. Performs XOR decryption.
+5. Recreates the original file.
+
+---
 
 ## ✨ Features
 
-* Simple and user-friendly Swing GUI
-* Pack multiple files into a single file
-* Unpack files from a packed file
-* Stores file name and file size in the header
-* Uses Java File I/O streams
-* Displays success and error messages
-* Supports different types of files
+* 🖥️ Simple Java Swing GUI
+* 📦 Pack multiple files into a single file
+* 📂 Unpack files from a packed file
+* 🔐 XOR-based encryption during packing
+* 🔓 XOR-based decryption during unpacking
+* 📄 Stores file name and file size in the header
+* 💾 Uses Java File I/O streams
+* ⚡ Byte-level file processing
+* ⚠️ Displays success and error messages
+* 📁 Supports different types of files
+
+---
+
+## 🔐 XOR Encryption and Decryption
+
+The project uses the **XOR (`^`) operator** for basic encryption and decryption.
+
+### Encryption
+
+During packing, each byte of the file is XORed with the key `'A'`.
+
+
+### Decryption
+
+During unpacking, the same XOR operation is performed to retrieve the original data.
+
+### Working
+
+```text
+Original Data
+      ↓
+Data ^ Key
+      ↓
+Encrypted Data
+      ↓
+Encrypted Data ^  key
+      ↓
+Original Data
+```
+
+XOR works in both directions because:
+
+```text
+DATA ^ KEY ^ KEY = DATA
+```
+
+> **Note:** This XOR implementation is for educational purposes and should not be considered strong encryption for real-world security.
+
+---
 
 ## 🛠️ Technologies Used
 
 * **Java**
 * **Java Swing**
-* **Java AWT Event Handling**
+* **Java AWT**
 * **Java File I/O**
-* `FileInputStream`
-* `FileOutputStream`
-* `JFrame`
-* `JLabel`
-* `JTextField`
-* `JButton`
-* `JOptionPane`
+* **XOR Operator (`^`)**
+
+---
 
 ## 📂 Project Structure
 
@@ -61,6 +116,8 @@ File-Packer-Unpacker/
 ├── FileUnpacker.java
 └── README.md
 ```
+
+---
 
 ## 🚀 How to Run
 
@@ -78,10 +135,18 @@ java FilePacker
 
 Enter:
 
-* Folder name/path
-* Packed file name
+```text
+Folder Name: path/to/folder
+File Name: Packed.dat
+```
 
-Then click **Pack Files**.
+Click:
+
+**Pack Files**
+
+The files will be packed and encrypted into the packed file.
+
+---
 
 ### Step 3: Compile FileUnpacker
 
@@ -95,11 +160,23 @@ javac FileUnpacker.java
 java FileUnpacker
 ```
 
-Enter the packed file name and click **Unpack Files**.
+Enter:
+
+```text
+File Name: Packed.dat
+```
+
+Click:
+
+**Unpack Files**
+
+The application will decrypt and extract the original files.
+
+---
 
 ## 🔄 Working Example
 
-Suppose a folder contains:
+Suppose the folder contains:
 
 ```text
 Documents/
@@ -118,9 +195,20 @@ Documents/
 └── Packed.dat
 ```
 
-The `Packed.dat` file contains the information and data of all three files.
+The `Packed.dat` file contains:
 
-When the packed file is unpacked, the original files are recreated:
+```text
+100-byte Header
+Encrypted File 1 Data
+
+100-byte Header
+Encrypted File 2 Data
+
+100-byte Header
+Encrypted File 3 Data
+```
+
+After unpacking:
 
 ```text
 file1.txt
@@ -128,9 +216,13 @@ file2.txt
 file3.txt
 ```
 
+The original file contents are restored through XOR decryption.
+
+---
+
 ## 🧠 Working Principle
 
-### Packing
+### 📦 Packing Process
 
 ```text
 Folder
@@ -143,12 +235,14 @@ Create 100-Byte Header
    ↓
 Read File Data
    ↓
-Write Header + Data
+XOR Encryption
+   ↓
+Write Header + Encrypted Data
    ↓
 Packed File
 ```
 
-### Unpacking
+### 📂 Unpacking Process
 
 ```text
 Packed File
@@ -157,31 +251,89 @@ Read 100-Byte Header
      ↓
 Get File Name + File Size
      ↓
-Read File Data
+Read Encrypted Data
+     ↓
+XOR Decryption
      ↓
 Create Original File
      ↓
 Extracted Files
 ```
 
+---
+
+## 📋 File Header Format
+
+Each file stored in the packed file has a **100-byte header**.
+
+The header contains:
+
+```text
+File Name + File Size + Padding Spaces
+```
+
+Example:
+
+```text
+sample.txt 1500
+```
+
+The remaining space is filled with spaces until the header reaches 100 bytes.
+
+This allows the unpacker to know:
+
+* Which file is being extracted
+* How many bytes should be read for that file
+
+---
+
 ## 🎯 Learning Objectives
 
-This project helps understand:
+This project helps in understanding:
 
 * Java Swing GUI development
 * Event handling using `ActionListener`
 * File and directory handling
-* `FileInputStream` and `FileOutputStream`
+* `FileInputStream`
+* `FileOutputStream`
 * Byte-level file operations
+* File packing and unpacking
+* XOR encryption and decryption
 * Reading and writing binary data
 * Exception handling
-* Basic application development in Java
+* Desktop application development
 
+---
+
+## ⚠️ Security Note
+
+The application uses a fixed XOR key:
+
+```text
+'A'
+```
+
+This is a **basic educational encryption technique** and is **not secure cryptography**.
+
+For real-world applications, stronger encryption algorithms such as **AES** should be used.
+
+---
+
+## 📸 Application
+
+### File Packer
+
+The File Packer GUI allows the user to enter the folder path and packed file name.
+
+### File Unpacker
+
+The File Unpacker GUI allows the user to enter the packed file name and extract the original files.
+
+---
 
 ## 👨‍💻 Author
 
 **Mayur Kishor Ahire**
 
-## 📄 License
+---
 
-This project is available for educational and learning purposes.
